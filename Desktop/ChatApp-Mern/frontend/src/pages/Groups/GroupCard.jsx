@@ -44,8 +44,9 @@ const GroupCard = ({ grp, currentTab }) => {
       });
     }
 
-    if(currentUser?.groupUnreads){
-      setUnreadCount(currentUser.groupUnreads)
+     if (currentUser?.groupUnreads.length > 0) {
+      const updateUnread = currentUser?.groupUnreads.filter((msg)=>msg?.receiver === grp?._id && msg?.sender !== currentUser?.details._id)
+      setUnreadCount(updateUnread || 0);
     }
   }, [userLastMsgs]);
 
@@ -167,9 +168,9 @@ const GroupCard = ({ grp, currentTab }) => {
             {loading ? (
               <div className="w-6 h-6 bg-gray-200 rounded-full ml-1.5 animate-pulse"></div>
             ) : (
-              unreadCount > 0 && (
+              unreadCount?.length > 0 && (
                 <div className="text-xs bg-[#F04A4C] text-white px-2 py-1 rounded-full ml-2 2xl:text-lg">
-                  {unreadCount}
+                  {unreadCount?.length}
                 </div>
               )
             )}
