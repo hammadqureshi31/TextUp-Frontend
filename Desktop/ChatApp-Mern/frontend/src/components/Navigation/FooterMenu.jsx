@@ -70,7 +70,7 @@ const FooterMenu = () => {
         {/* Unread Badge */}
         {unreadMessages > 0 && (
           <div className="absolute -top-1 right-3 bg-[#F04A4C] text-xs text-white font-poppins px-1.5 py-0.5 rounded-full flex items-center justify-center">
-            {unreadMessages}
+            {unreadMessages?.length}
           </div>
         )}
       </Link>
@@ -88,7 +88,7 @@ const FooterMenu = () => {
         {/* Unread Badge */}
         {groupUnReads > 0 && (
           <div className="absolute -top-1 right-0 bg-[#F04A4C] text-xs text-white font-poppins px-1.5 py-0.5 rounded-full flex items-center justify-center">
-            {groupUnReads}
+            {groupUnReads?.length}
           </div>
         )}
       </Link>
