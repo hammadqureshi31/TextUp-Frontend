@@ -67,7 +67,7 @@ const Sidebar = ({showChatRoom, setShowChatRoom}) => {
           tab="messages"
           currentTab={currentTab}
           onClick={handleNavigate}
-          unreadCount={unreadMessages}
+          unreadCount={unreadMessages?.length}
         />
 
         {/* Groups Tab */}
@@ -76,7 +76,7 @@ const Sidebar = ({showChatRoom, setShowChatRoom}) => {
           tab="groups"
           currentTab={currentTab}
           onClick={handleNavigate}
-          unreadCount={groupUnReads}
+          unreadCount={groupUnReads?.length}
         />
 
         {/* Contacts Tab */}
