@@ -24,7 +24,7 @@ const ContactList = ({
   const dispatch = useDispatch();
   const [user, setUser] = useState();
   const [loading, setLoading] = useState(true);
-  const [buttonLoading, setButtonLoading] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(null);
 
   console.log(selector.contactedUsers)
 
@@ -50,7 +50,7 @@ const ContactList = ({
   }, [user, allUsers]);
 
   const addNewUserContact = async (addContact) => {
-    setButtonLoading(true);
+    setButtonLoading(addContact);
     try {
       await axios.post(`${backendPortURL}user/add-new-contact/${user?._id}`, {
         contactId: addContact,
@@ -61,7 +61,7 @@ const ContactList = ({
     } catch (error) {
       console.error("Error adding contact:", error);
     } finally {
-      setButtonLoading(false);
+      setButtonLoading(null);
     }
   };
 
@@ -152,7 +152,7 @@ const ContactList = ({
                       onClick={() => addNewUserContact(contact._id)}
                       disabled={buttonLoading}
                     >
-                      {buttonLoading ? "Adding..." : "Add"}
+                      {buttonLoading === contact._id ? "Adding..." : "Add"}
                     </button>
                   </div>
                 ))
