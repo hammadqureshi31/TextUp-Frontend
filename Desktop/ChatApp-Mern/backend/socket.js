@@ -6,12 +6,17 @@ import { model } from "mongoose";
 // Messaging socket setup
 export const setupMessagingSocket = (server) => {
   const io = new Server(server, {
-    path: "/messaging",
-    cors: {
-      origin: ["http://localhost:5173"],
-      methods: ["GET", "POST"],
-    },
-  });
+  path: "/messaging",
+  cors: {
+    origin: [
+      "http://localhost:5173",
+      "https://text-up-chat-applicatoin-mern.vercel.app"
+    ],
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
 
   io.on("connection", (socket) => {
     // console.log("Messaging socket connected:", socket.id);
