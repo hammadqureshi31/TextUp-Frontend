@@ -157,6 +157,37 @@ export async function handleSignOutUser(req, res) {
   }
 }
 
+
+
+export async function handleUpdateLastSeen(req, res) {
+  try {
+    const { userId } = req.body; 
+
+    if (!userId) {
+      return res.status(400).send("User ID is required.");
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        lastSeen: new Date(),
+        isOnline: false,
+      },
+      { new: true }
+    ); 
+
+    if (!updatedUser) {
+      return res.status(404).send("User not found.");
+    }
+
+    return res.status(200).send("User last seen updated.");
+  } catch (error) {
+    console.error("Error updating last seen:", error);
+    res.status(500).send("An error occurred while updating last seen.");
+  }
+}
+
+
 export async function handleGetUserDetails(req, res) {
   const userDetails = req.valideUser;
   
