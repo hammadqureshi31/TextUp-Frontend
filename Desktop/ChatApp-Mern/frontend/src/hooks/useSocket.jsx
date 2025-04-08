@@ -38,6 +38,7 @@ const useSocket = (setupSocket, newChatId) => {
 
       socket.current.on("read-message", () => {
         console.log("Messages marked as read");
+        dispatch(fetchUserDetails())
         // if (newChatId) {
         //   dispatch(fetchAllMessages(newChatId, user));
         // }
