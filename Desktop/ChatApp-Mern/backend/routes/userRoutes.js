@@ -9,6 +9,7 @@ import {
   handleAddNewContact,
   handleForgotPassword,
   handleResetPassword,
+  handleUpdateLastSeen,
 } from "../controllers/userControllers.js";
 import { verifyUser } from "../middlewares/verifyUser.js";
 
@@ -19,6 +20,8 @@ router.post("/signup", handleSignupUser);
 router.post("/login", handleLoginUser);
 
 router.get("/me",verifyUser, handleGetUserDetails);
+
+router.post("/update-lastseen", handleUpdateLastSeen);
 
 // Secured Routes
 router.post("/signout", verifyUser, handleSignOutUser);
