@@ -247,13 +247,20 @@ export async function handleGetUserDetails(req, res) {
       }),
     ]);
 
-    // Fetch unread messages count directly from MongoDB
     const [unreadCount, unreadGroup] = await Promise.all([
-      Message.countDocuments({ receiver: userDetails._id, unread: false, mode: "inbox" }),
-      Message.countDocuments({ receiver: { $in: userGroups.map((group) => group._id) }, unread: false, mode: "group" }),
+      Message.find({
+        receiver: userDetails._id,
+        unread: false,
+        mode: "inbox",
+      }),
+      Message.find({
+        receiver: { $in: userGroups.map((group) => group._id) },
+        unread: false,
+        mode: "group",
+      }),
     ]);
 
-    // console.log("unreadCount",unreadCount, "unreadGroup",unreadGroup)
+    console.log("unreadCount",unreadCount, "unreadGroup",unreadGroup)
 
     res.status(200).json({
       details: currentUser,
