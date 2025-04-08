@@ -49,7 +49,7 @@ const ChatCard = ({ singleContact, loading, currentTab }) => {
     }
 
      if (currentUser?.unread.length > 0) {
-      const updateUnread = currentUser?.unread.filter((msg)=>msg?.receiver === singleContact?._id)
+      const updateUnread = currentUser?.unread.filter((msg)=>msg?.sender === singleContact?._id)
       setUnreadCount(updateUnread || 0);
     }
   }, [userLastMsgs]);
