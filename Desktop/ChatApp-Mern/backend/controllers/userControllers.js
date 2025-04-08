@@ -159,7 +159,9 @@ export async function handleSignOutUser(req, res) {
 
 export async function handleGetUserDetails(req, res) {
   const userDetails = req.valideUser;
-
+  
+  console.log("userDetails..",userDetails);
+  
   if (!userDetails || !userDetails._id) {
     return res.status(401).send("Unauthorized Request...");
   }
