@@ -134,7 +134,8 @@ const Home = () => {
     selectedChat,
     newChatId,
     showChatRoom,
-    currentUser
+    currentUser,
+    selector
   ]);
 
   useEffect(() => {
