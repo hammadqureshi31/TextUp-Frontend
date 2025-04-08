@@ -1,1 +1,1 @@
-export const backendPortURL = "http://localhost:8000/";
+export const backendPortURL = "https://text-up-chatapp-backend-mern.vercel.app/";
