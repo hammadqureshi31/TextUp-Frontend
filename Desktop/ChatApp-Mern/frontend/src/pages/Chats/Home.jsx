@@ -17,6 +17,7 @@ import CallUI from "../../components/Chat/CallUI";
 import Search from "../../components/Search/Search";
 import { fetchAllMessages } from "../../redux/slice/messagesSlice";
 import { setCallOffer } from "../../redux/slice/callOffer";
+import { backendPortURL } from "../../config";
 
 const Home = () => {
   const location = useLocation();
@@ -52,10 +53,17 @@ const Home = () => {
     }
   }, []);
 
+  // const handleBeforeUnload = () => {
+  //   if (socket?.current !== undefined) {
+  //     setLastSeenAndOnlineEvent(false);
+  //   }
+  // };
+
   const handleBeforeUnload = () => {
-    if (socket?.current !== undefined) {
-      setLastSeenAndOnlineEvent(false);
-    }
+    const url = `${backendPortURL}user/update-lastseen`; 
+    const data = JSON.stringify({ userId: currentUser._id });
+
+    navigator.sendBeacon(url, data);
   };
 
   useEffect(() => {
