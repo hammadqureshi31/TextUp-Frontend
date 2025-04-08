@@ -24,7 +24,7 @@ app.use(express.json());
 app.use(urlencoded({extended: false}));
 
 
-const allowedOrigins = ['https://text-up-chat-applicatoin-mern.vercel.app', 'https://text-up-chatapp-backend-mern.vercel.app'];
+const allowedOrigins = ['https://text-up-chat-applicatoin-mern.vercel.app', 'https://textup-chatapplicatoin-mern-production.up.railway.app'];
 
 app.use(
   cors({
@@ -77,7 +77,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "https://text-up-chatapp-backend-mern.vercel.app/auth/google/callback",
+      callbackURL: "https://textup-chatapplicatoin-mern-production.up.railway.app/auth/google/callback",
       scope: ["profile", "email"],
     },
     async (accessToken, refreshToken, profile, done) => {
