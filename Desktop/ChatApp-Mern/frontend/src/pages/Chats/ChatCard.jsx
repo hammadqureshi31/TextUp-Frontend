@@ -48,8 +48,9 @@ const ChatCard = ({ singleContact, loading, currentTab }) => {
       });
     }
 
-    if (currentUser?.unread) {
-      setUnreadCount(currentUser.unread);
+     if (currentUser?.unread.length > 0) {
+      const updateUnread = currentUser?.unread.filter((msg)=>msg?._id === singleContact?._id)
+      setUnreadCount(updateUnread || 0);
     }
   }, [userLastMsgs]);
 
@@ -196,9 +197,9 @@ const ChatCard = ({ singleContact, loading, currentTab }) => {
             <div className="w-6 h-6 bg-gray-200 rounded-full ml-1.5 animate-pulse"></div>
           ) : (
             lastMessage?.receiver === currentUser?.details?._id &&
-            unreadCount > 0 && (
+            unreadCount?.length > 0 && (
               <div className="text-xs bg-[#F04A4C] text-white px-2 py-1 rounded-full ml-2 2xl:text-lg 2xl:px-3">
-                {unreadCount}
+                {unreadCount?.length}
               </div>
             )
           )}
