@@ -24,7 +24,7 @@ app.use(express.json());
 app.use(urlencoded({extended: false}));
 
 
-const allowedOrigins = ['http://localhost:5173', 'http://localhost:8000'];
+const allowedOrigins = ['https://text-up-chat-applicatoin-mern.vercel.app', 'http://localhost:8000'];
 
 app.use(
   cors({
@@ -125,7 +125,7 @@ app.get(
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "http://localhost:5173/login",
+    failureRedirect: "https://text-up-chat-applicatoin-mern.vercel.app/login",
   }),
   async (req, res, next) => {
     try {
@@ -138,7 +138,7 @@ app.get(
       res.cookie("refreshToken", refreshToken, refreshTokenOptions);
       res.cookie("accessToken", accessToken, accessTokenOptions);
 
-      res.redirect("http://localhost:5173");
+      res.redirect("https://text-up-chat-applicatoin-mern.vercel.app");
     } catch (error) {
       console.error("Error generating tokens:", error);
       res.status(500).send("Failed to generate tokens.");
