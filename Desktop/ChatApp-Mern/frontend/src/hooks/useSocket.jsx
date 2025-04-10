@@ -14,6 +14,7 @@ const useSocket = (setupSocket, newChatId) => {
   const [groupID, setGroupID] = useState(null);
   const [typerMode, setTyperMode] = useState(null);
   const [fetchMsgs, setfetchMsgs] = useState(false);
+  const [upateSeenMsgs, setUpateSeenMsgs] = useState(false);
   const socket = useRef(null);
 
   useEffect(() => {
@@ -38,10 +39,11 @@ const useSocket = (setupSocket, newChatId) => {
 
       socket.current.on("read-message", () => {
         console.log("Messages marked as read");
+        // setUpateSeenMsgs((prev)=>!prev);
         dispatch(fetchUserDetails())
-        setfetchMsgs(true);
+        // setfetchMsgs(true);
         // if (newChatId) {
-        //   dispatch(fetchAllMessages(newChatId, user));
+          // dispatch(fetchAllMessages(newChatId, user));
         // }
       });
 
@@ -127,6 +129,8 @@ const useSocket = (setupSocket, newChatId) => {
     typerMode,
     setfetchMsgs,
     fetchMsgs,
+    upateSeenMsgs,
+    setUpateSeenMsgs
   };
 };
 

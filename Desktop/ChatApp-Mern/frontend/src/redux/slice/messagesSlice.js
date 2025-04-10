@@ -26,7 +26,7 @@ const messageSlice = createSlice({
   reducers: {
     resetMessages: (state) => {
       state.data = []; 
-      // state.sharedOffset = 0
+      // state.isError = false;
     },
   },
   extraReducers: (builder) => {

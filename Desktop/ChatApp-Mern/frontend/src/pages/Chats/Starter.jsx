@@ -13,22 +13,25 @@ const Starter = () => {
   const [showSplash, setShowSplash] = useState(true);
   const dispatch = useDispatch();
   const [currentUser, setCurrentUser] = useState(null);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const selector = useSelector((state) => state?.currentUser?.data?.details);
 
-
   useEffect(() => {
+    const savedLang = localStorage.getItem("lang");
+    if (!savedLang) {
+      localStorage.setItem("lang", "en");
+    }
     const splashTimer = setTimeout(() => {
       setShowSplash(false);
       dispatch(fetchUserDetails());
       dispatch(getAllUsers());
     }, 3000);
 
-    return () => clearTimeout(splashTimer); 
+    return () => clearTimeout(splashTimer);
   }, [dispatch]);
 
   useEffect(() => {
-    if(selector) setCurrentUser(selector);
+    if (selector) setCurrentUser(selector);
     // console.log(selector);
   }, [selector]);
 

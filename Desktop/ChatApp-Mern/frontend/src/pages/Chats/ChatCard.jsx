@@ -23,7 +23,7 @@ const ChatCard = ({ singleContact, loading, currentTab }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const setupSocket = true;
-  const { socket, typing, typerMode } = useSocket(
+  const { socket, typing, typerMode, fetchMsgs, setfetchMsgs } = useSocket(
     singleContact?._id && setupSocket,
     singleContact?._id
   );
@@ -67,6 +67,7 @@ const ChatCard = ({ singleContact, loading, currentTab }) => {
       sessionStorage.setItem("previousTab", currentTab);
       sessionStorage.setItem("replaceChat", currentTab);
       dispatch(resetMessages());
+      setfetchMsgs(false);
       // dispatch(fetchAllMessages(singleContact?._id, currentUser?.details._id))
       navigate(`/textup?tab=${currentTab}&to=${singleContact?._id}`);
     }

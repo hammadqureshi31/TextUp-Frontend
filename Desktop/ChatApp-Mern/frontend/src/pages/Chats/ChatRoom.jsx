@@ -99,6 +99,8 @@ const ChatRoom = () => {
     typerMode,
     fetchMsgs,
     setfetchMsgs,
+    upateSeenMsgs,
+    setUpateSeenMsgs
   } = useSocket(setupSocket, newChatId);
   const [decFetch, setDecFetch] = useState(false);
 
@@ -193,6 +195,7 @@ const ChatRoom = () => {
   }, [receiveBy?._id]);
 
   useEffect(() => {
+    console.log("offset",offset, fetchMsgs)
     if (newChatId && user && offset > 0 && fetchMsgs === false && !msgError) {
       dispatch(fetchAllMessages(msgDetails));
     }
@@ -212,9 +215,10 @@ const ChatRoom = () => {
     const handleScroll = () => {
       if (offsetRef.current) {
         const scrollTop = offsetRef.current.scrollTop;
-        // console.log("ScrollTop:", scrollTop, "offset", offset);
+        // console.log("ScrollTop:", scrollTop, "offset", offset, "msgError",msgError);
 
         if (scrollTop == 0 && !msgError) {
+          console.log("increase offset...")
           setOffset((prev) => prev + 1);
         }
       }
@@ -611,7 +615,7 @@ const ChatRoom = () => {
   ]);
 
   return (
-    <div className="bg-white w-full h-[97%] sm:h-screen flex flex-col relative">
+    <div className="bg-white w-full h-screen flex flex-col relative">
       {/* User Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b h-16 2xl:h-24">
         <div className="flex items-center space-x-2 2xl:space-x-5 ">
@@ -701,7 +705,7 @@ const ChatRoom = () => {
               className={`flex w-full mb-2 ${
                 msg.sender?._id === user?._id ? "justify-end" : "justify-start"
               }`}
-              ref={index == 10 && !typing ? messagesEndRef : null}
+              ref={index === 10 && !typing ? messagesEndRef : null}
             >
               <div className="flex flex-col items-end">
                 {/* Image Content */}
