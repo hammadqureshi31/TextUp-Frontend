@@ -12,15 +12,15 @@ const refreshTokenMaxAge = 240 * 60 * 60 * 1000; // 10 days in milliseconds
 export const accessTokenOptions = {
   maxAge: accessTokenMaxAge,
   httpOnly: true,
-  secure: true, // Must be true in production (for HTTPS)
+  secure: false, // Must be true in production (for HTTPS)
   sameSite: "None", // Use 'lax' for cross-site requests
   path: "/",
 };
-
+ 
 export const refreshTokenOptions = {
   maxAge: refreshTokenMaxAge,
   httpOnly: true,
-  secure: true, // Must be true in production (for HTTPS)
+  secure: false, // Must be true in production (for HTTPS)
   sameSite: "None", // Use 'lax' for cross-site requests
   path: "/",
 };
@@ -161,7 +161,9 @@ export async function handleSignOutUser(req, res) {
 
 export async function handleUpdateLastSeen(req, res) {
   try {
-    const { userId } = req.body; 
+    const { userId } = JSON.parse(req.body.toString()); 
+
+    console.log("userId",JSON.parse(req.body))
 
     if (!userId) {
       return res.status(400).send("User ID is required.");
@@ -191,7 +193,7 @@ export async function handleUpdateLastSeen(req, res) {
 export async function handleGetUserDetails(req, res) {
   const userDetails = req.valideUser;
   
-  console.log("userDetails..",userDetails);
+  // console.log("userDetails..",userDetails);
   
   if (!userDetails || !userDetails._id) {
     return res.status(401).send("Unauthorized Request...");
@@ -260,7 +262,7 @@ export async function handleGetUserDetails(req, res) {
       }),
     ]);
 
-    console.log("unreadCount",unreadCount, "unreadGroup",unreadGroup)
+    // console.log("unreadCount",unreadCount, "unreadGroup",unreadGroup)
 
     res.status(200).json({
       details: currentUser,

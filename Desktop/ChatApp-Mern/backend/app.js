@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import userRoutes from './routes/userRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
 import groupRoutes from './routes/groupRoutes.js';
+import msgTranslation from "./routes/msgTranslation.js";
 import passport from 'passport';
 import session from "express-session";
 import { User } from './models/userModel.js';
@@ -21,10 +22,10 @@ const { Strategy: GoogleStrategy } = pkg;
 
 app.use(cookieParser());
 app.use(express.json());
-app.use(urlencoded({extended: false}));
+app.use(urlencoded({extended: true}));
 
 
-const allowedOrigins = ['https://text-up-chat-applicatoin-mern.vercel.app', 'https://textup-chatapplicatoin-mern-production.up.railway.app'];
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:8000'];
 
 app.use(
   cors({
@@ -50,6 +51,7 @@ app.get('/', (req, res) => {
 app.use('/user', userRoutes);
 app.use('/message', messageRoutes);
 app.use('/group', groupRoutes);
+app.use('/translate', msgTranslation);
 
 
 
@@ -60,7 +62,7 @@ app.use(
     resave: false,
     saveUninitialized: true,
     cookie: {
-      secure: true, 
+      secure: false, 
       sameSite: "none", 
       httpOnly: true, // Helps prevent cross-site scripting attacks
     },
@@ -77,7 +79,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "https://textup-chatapplicatoin-mern-production.up.railway.app/auth/google/callback",
+      callbackURL: "http://localhost:8000/auth/google/callback",
       scope: ["profile", "email"],
     },
     async (accessToken, refreshToken, profile, done) => {
@@ -125,7 +127,7 @@ app.get(
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "https://text-up-chat-applicatoin-mern.vercel.app/login",
+    failureRedirect: "http://localhost:5173/login",
   }),
   async (req, res, next) => {
     try {
@@ -138,7 +140,7 @@ app.get(
       res.cookie("refreshToken", refreshToken, refreshTokenOptions);
       res.cookie("accessToken", accessToken, accessTokenOptions);
 
-      res.redirect("https://text-up-chat-applicatoin-mern.vercel.app");
+      res.redirect("http://localhost:5173");
     } catch (error) {
       console.error("Error generating tokens:", error);
       res.status(500).send("Failed to generate tokens.");

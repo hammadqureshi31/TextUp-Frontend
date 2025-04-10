@@ -21,7 +21,7 @@ export const verifyUser = async (req, res, next) => {
         const refreshTokenUser = await User.findById(refreshTokenDetails._id);
         if (!refreshTokenUser) return res.status(404).send("No user found!");
 
-        console.log("refreshTokenUser", refreshTokenUser);
+        // console.log("refreshTokenUser", refreshTokenUser);
 
         const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(refreshTokenUser._id);
 
@@ -38,7 +38,7 @@ export const verifyUser = async (req, res, next) => {
     try {
       const accessTokenDetails = jwt.verify(access, process.env.ACCESS_TOKEN_SECRET);
       const accessTokenUser = await User.findById(accessTokenDetails._id);
-      console.log("accessTokenUser", accessTokenUser);
+      // console.log("accessTokenUser", accessTokenUser);
       if (!accessTokenUser) return res.status(404).send("No user found!");
 
       req.valideUser = accessTokenUser;

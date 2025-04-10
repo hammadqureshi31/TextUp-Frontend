@@ -146,7 +146,7 @@ export const setupCallingSocket = (server) => {
   });
 
   callIo.on("connection", (socket) => {
-    // console.log(`Socket Connected`, socket.id);
+    console.log(`Socket Connected`, socket.id);
 
     socket.on("joined", ({ userId, socketId }) => {
       console.log(userId, socketId, socket.id);
@@ -167,9 +167,9 @@ export const setupCallingSocket = (server) => {
     });
 
     socket.on("reject:call", ({ userId }) => {
-      console.log("userid who reject's:",userId)
+      console.log("userid who reject's:",userId) 
       callIo.to(emailToSocketIdMap.get(userId)).emit("call:rejected", { from: socket.id });
-      console.log(`Socket reject:call`);
+      console.log(`Socket reject:call`, emailToSocketIdMap.get(userId));
     });
 
     socket.on("peer:nego:needed", ({ offer, userId }) => {
