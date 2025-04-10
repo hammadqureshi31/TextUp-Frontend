@@ -25,7 +25,7 @@ app.use(express.json());
 app.use(urlencoded({extended: true}));
 
 
-const allowedOrigins = ['http://localhost:5173', 'http://localhost:8000'];
+const allowedOrigins = ['https://text-up-chat-applicatoin-mern.vercel.app', 'https://textup-chatapplicatoin-mern-production.up.railway.app'];
 
 app.use(
   cors({
@@ -62,7 +62,7 @@ app.use(
     resave: false,
     saveUninitialized: true,
     cookie: {
-      secure: false, 
+      secure: true, 
       sameSite: "none", 
       httpOnly: true, // Helps prevent cross-site scripting attacks
     },
@@ -79,7 +79,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:8000/auth/google/callback",
+      callbackURL: "https://textup-chatapplicatoin-mern-production.up.railway.app/auth/google/callback",
       scope: ["profile", "email"],
     },
     async (accessToken, refreshToken, profile, done) => {
@@ -127,7 +127,7 @@ app.get(
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "http://localhost:5173/login",
+    failureRedirect: "https://text-up-chat-applicatoin-mern.vercel.app/login",
   }),
   async (req, res, next) => {
     try {
@@ -140,7 +140,7 @@ app.get(
       res.cookie("refreshToken", refreshToken, refreshTokenOptions);
       res.cookie("accessToken", accessToken, accessTokenOptions);
 
-      res.redirect("http://localhost:5173");
+      res.redirect("https://text-up-chat-applicatoin-mern.vercel.app");
     } catch (error) {
       console.error("Error generating tokens:", error);
       res.status(500).send("Failed to generate tokens.");

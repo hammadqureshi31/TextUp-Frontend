@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-const apiKey = 'Ex9mfA5cNNF3tr4TrJZlUAbPnXM7EKpCeoc3PIVOPoY0EnM6CpxrJQQJ99BDACGhslBXJ3w3AAAbACOGk0pI';
-const region = 'centralindia';
 
 export async function handleTranslateMsgs(req, res){
     const { text, to } = req.body;
@@ -12,8 +10,8 @@ export async function handleTranslateMsgs(req, res){
         [{ Text: text }],
         {
           headers: {
-            'Ocp-Apim-Subscription-Key': apiKey,
-            'Ocp-Apim-Subscription-Region': region,
+            'Ocp-Apim-Subscription-Key': process.env.API_KEY_TRANSLATION,
+            'Ocp-Apim-Subscription-Region': process.env.REGION,
             'Content-Type': 'application/json',
           },
         }
