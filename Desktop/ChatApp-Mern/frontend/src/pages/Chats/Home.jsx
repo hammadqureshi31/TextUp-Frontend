@@ -62,8 +62,9 @@ const Home = () => {
   const handleBeforeUnload = () => {
     const url = `${backendPortURL}user/update-lastseen`; 
     const data = JSON.stringify({ userId: currentUser._id });
-
+ 
     navigator.sendBeacon(url, data);
+    setLastSeenAndOnlineEvent(false);
   };
 
   useEffect(() => {
@@ -193,12 +194,12 @@ const Home = () => {
       ) : (
         <div className="ring-1 ring-gray-200 bg-gradient-to-r from-[#04081E] via-[#2A2760] to-[#334E83] min-h-screen w-full md:max-w-sm 2xl:max-w-lg">
           {/* Header Menu */}
-          <div className="w-full bg-transparent h-20 2xl:h-28">
+          <div className="w-full bg-transparent h-20 2xl:h-24">
             <HeaderMenu openModal={openModal} setOpenModal={setOpenModal} />
           </div>
 
           {/* Main Content */}
-          <div className="flex-grow h-[calc(100%-159px)] sm:h-[calc(100%-80px)] 2xl:h-[calc(100%-109px)]  overflow-hidden">
+          <div className="flex-grow h-[calc(100%-175px)] sm:h-[calc(100%-80px)] 2xl:h-[calc(100%-109px)]  overflow-hidden">
             {currentTab === "messages" && (
               <MessageList currentTab={currentTab} />
             )}

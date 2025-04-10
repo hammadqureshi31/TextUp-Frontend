@@ -31,7 +31,7 @@ import { PiChecksBold, PiChecksLight } from "react-icons/pi";
 const ChatRoom = () => {
   const { userId: pathUserId, callerId, calleeId, callOption } = useParams();
 
-  console.log("callerId, calleeId, callOption", callerId, calleeId, callOption);
+  // console.log("callerId, calleeId, callOption", callerId, calleeId, callOption);
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -102,7 +102,7 @@ const ChatRoom = () => {
   } = useSocket(setupSocket, newChatId);
   const [decFetch, setDecFetch] = useState(false);
 
-  console.log("callOffer", callOffer);
+  // console.log("callOffer", callOffer);
 
   // Mark Unread messages as read
   useEffect(() => {
@@ -186,10 +186,11 @@ const ChatRoom = () => {
     if (newChatId && receiveBy?._id) {
       // dispatch(resetMessages());
       dispatch(fetchAllMessages(msgDetails));
+      console.log("fetchAllMessages...");
       // setOffset(0);
       // setDecFetch(false);
     }
-  }, [newChatId, receiveBy?._id]);
+  }, [receiveBy?._id]);
 
   useEffect(() => {
     if (newChatId && user && offset > 0 && fetchMsgs === false && !msgError) {
@@ -303,19 +304,6 @@ const ChatRoom = () => {
       console.error("Image upload failed:", error);
     }
   };
-
-  // extract messages
-  // useEffect(() => {
-  //   if (allMessages?.length > 0 && allMessages.length !== allMsgs) {
-  //     console.log("allMessages", allMessages);
-  //     const chats = allMessages.filter(
-  //       (msg) =>
-  //         (msg.sender?._id === user?._id && msg.receiver === receiveBy?._id) ||
-  //         (msg.receiver === user?._id && msg.sender?._id === receiveBy?._id)
-  //     );
-  //     setMessages(chats);
-  //   }
-  // }, [allMessages, user, receiveBy]);
 
   const handleTyping = (e) => {
     setNewMessage(e.target.value);
@@ -455,7 +443,7 @@ const ChatRoom = () => {
   };
 
   const handleReject = useCallback(() => {
-    const rejectedBy = localStorage.getItem("from");
+    const rejectedBy = localStorage.getItem("callee");
     callSocket.emit("reject:call", {
       userId: receiveBy?._id || incomingCall?._id || rejectedBy,
     });
@@ -574,6 +562,7 @@ const ChatRoom = () => {
   }, []);
 
   const handleCallRejected = () => {
+    console.log("call rejected")
     toast.error("Call rejected");
 
     if (myStream) {
@@ -611,7 +600,7 @@ const ChatRoom = () => {
       callSocket.off("call:accepted", handleCallAccepted);
       callSocket.off("peer:nego:needed", handleNegoNeedIncomming);
       callSocket.off("peer:nego:final", handleNegoNeedFinal);
-      callSocket.off("call:rejected");
+      callSocket.off("call:rejected", handleCallRejected);
     };
   }, [
     callSocket,
@@ -622,9 +611,9 @@ const ChatRoom = () => {
   ]);
 
   return (
-    <div className="bg-white w-full h-screen flex flex-col relative">
+    <div className="bg-white w-full h-[97%] sm:h-screen flex flex-col relative">
       {/* User Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b h-16 2xl:h-28">
+      <div className="flex items-center justify-between px-4 py-3 border-b h-16 2xl:h-24">
         <div className="flex items-center space-x-2 2xl:space-x-5 ">
           <div
             className="cursor-pointer md:hidden"
@@ -638,14 +627,14 @@ const ChatRoom = () => {
                 receiveBy?.profilePicture || "../../profile-placeholder.webp"
               }
               alt={`${receiveBy?.firstname}'s profile`}
-              className="w-10 h-10 rounded-full object-cover 2xl:w-16 2xl:h-16"
+              className="w-10 h-10 rounded-full object-cover 2xl:w-14 2xl:h-14"
             />
           ) : (
-            <FaUser className="w-11 h-11 rounded-full object-cover 2xl:w-16 2xl:h-16 text-gray-200 bg-gray-100/60 p-1.5" />
+            <FaUser className="w-11 h-11 rounded-full object-cover 2xl:w-14 2xl:h-14 text-gray-200 bg-gray-100/60 p-1.5" />
           )}
 
           <div>
-            <h1 className=" text-base text-nowrap text-ellipsis 2xl:text-3xl font-medium text-[#334E83] font-acme">
+            <h1 className=" text-base text-nowrap text-ellipsis 2xl:text-2xl font-medium text-[#334E83] font-acme">
               {receiveBy?.firstname.slice(0, 1).toUpperCase()}
               {receiveBy?.firstname.slice(1)} {receiveBy?.lastname}
             </h1>
@@ -685,14 +674,14 @@ const ChatRoom = () => {
         <div className="flex items-center space-x-4 2xl:space-x-8 ">
           <HiOutlineVideoCamera
             onClick={() => handleCallUser(receiveBy, "video")}
-            className="w-6 h-6 2xl:w-9 2xl:h-9  text-gray-600 cursor-pointer"
+            className="w-6 h-6 2xl:w-8 2xl:h-8  text-gray-600 cursor-pointer"
           />
 
           <IoCallOutline
             onClick={() => handleCallUser(receiveBy, "voice")}
-            className="w-6 h-6 2xl:w-9 2xl:h-9 text-gray-600 cursor-pointer"
+            className="w-6 h-6 2xl:w-8 2xl:h-8 text-gray-600 cursor-pointer"
           />
-          <IoIosInformationCircleOutline className="w-6 h-6 2xl:w-9 2xl:h-9 text-gray-600 cursor-pointer" />
+          <IoIosInformationCircleOutline className="w-6 h-6 2xl:w-8 2xl:h-8 text-gray-600 cursor-pointer" />
         </div>
       </div>
       <Toaster />
@@ -741,7 +730,7 @@ const ChatRoom = () => {
                 {/* Message Content */}
                 {msg.content && (
                   <div
-                    className={`w-full max-w-xs 2xl:text-2xl flex-col sm:max-w-sm md:max-w-md lg:max-w-lg 2xl:max-w-2xl  text-wrap  rounded-lg shadow ${
+                    className={`w-full max-w-xs 2xl:text-xl flex-col sm:max-w-sm md:max-w-md lg:max-w-lg 2xl:max-w-2xl  text-wrap  rounded-lg shadow ${
                       msg.sender?._id === user?._id
                         ? "bg-[#334E83] text-white"
                         : "bg-gray-200"
@@ -752,21 +741,21 @@ const ChatRoom = () => {
                     </div>
                     {/* Message Metadata */}
                     <div
-                      className={` w-full pl-4 pr-2 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg 2xl:text-base text-gray-500 flex gap-1 ${
+                      className={` w-full pl-4 pr-2 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg text-gray-500 flex gap-1 ${
                         msg.sender?._id === user?._id
                           ? "justify-end text-white"
                           : "justify-start"
                       }`}
                     >
                       <div
-                        className={`text-[11px] 2xl:text-base ${
+                        className={`text-[11px] 2xl:text-xs ${
                           msg.sender?._id === user?._id && "opacity-60"
                         }`}
                       >
                         {formatMessageDate(msg.msgDate)}
                       </div>
                       <div
-                        className={`text-[11px] 2xl:text-base text-nowrap ${
+                        className={`text-[11px] 2xl:text-xs text-nowrap ${
                           msg.sender?._id === user?._id && "opacity-60"
                         }`}
                       >
@@ -950,16 +939,17 @@ const ChatRoom = () => {
           {/* Accept & Reject Buttons */}
           <div className="flex justify-around mt-4">
             <button
-              onClick={handleAccept}
-              className="px-4 py-2 rounded-md bg-green-500 text-white font-medium hover:bg-green-600 transition-all"
-            >
-              Accept
-            </button>
-            <button
               onClick={handleReject}
               className="px-4 py-2 rounded-md bg-red-500 text-white font-medium hover:bg-red-600 transition-all"
             >
               Reject
+            </button>
+
+            <button
+              onClick={handleAccept}
+              className="px-4 py-2 rounded-md bg-green-500 text-white font-medium hover:bg-green-600 transition-all"
+            >
+              Accept
             </button>
           </div>
         </div>

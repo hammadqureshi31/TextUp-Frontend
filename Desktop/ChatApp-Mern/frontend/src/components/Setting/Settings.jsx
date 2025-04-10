@@ -8,34 +8,36 @@ import { PiChatCircleDotsLight } from "react-icons/pi";
 import { HiOutlineBellAlert } from "react-icons/hi2";
 import { TfiHelpAlt, TfiWorld } from "react-icons/tfi";
 import { TbMobiledata } from "react-icons/tb";
+import axios from "axios";
+import { backendPortURL } from "../../config";
 
 const languageOptions = [
   { code: "en", label: "English 🇬🇧" },
   { code: "es", label: "Español 🇪🇸" },
   { code: "fr", label: "Français 🇫🇷" },
   { code: "ru", label: "Русский 🇷🇺" },
-  { code: "ar", label: "العربية 🇸🇦" },
   { code: "pt", label: "Português 🇧🇷" },
-  { code: "ur", label: "اردو 🇵🇰" },
 ];
 
 const Settings = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
   const currentUser = useSelector((state) => state.currentUser?.data.details);
   const [showModal, setShowModal] = useState(false);
   const [language, setLanguage] = useState(i18n.language);
+  const [firstName, setFirstName] = useState("");
   const [loading, setLoading] = useState(false); // Loading state
-  const [translatedName, setTranslatedName] = useState("");
+  // const [translatedName, setTranslatedName] = useState("");
 
-  useEffect(() => {
-    if (currentUser?.firstname) {
-      const fetchTranslation = () => {
-        const result = i18n.t(currentUser.firstname); // Await the translation
-        setTranslatedName(result); // Set the translated text in state
-      };
-      fetchTranslation();
-    }
-  }, [currentUser?.firstname, t]);
+  // useEffect(() => {
+  //   if (currentUser?.firstname) {
+  //     const fetchTranslation = () => {
+  //       const result = i18n.t(currentUser.firstname); // Await the translation
+  //       setTranslatedName(result); // Set the translated text in state
+  //     };
+  //     fetchTranslation();
+  //   }
+  // }, [currentUser?.firstname, t]);
 
   useEffect(() => {
     const savedLang = localStorage.getItem("lang") || "en";
@@ -48,9 +50,30 @@ const Settings = () => {
     await i18n.changeLanguage(lng);
     localStorage.setItem("lang", lng);
     setLanguage(lng);
-    setTimeout(() => setLoading(false), 2000); // Simulate loading time
+    setTimeout(() => setLoading(false), 1000); // Simulate loading time
     setShowModal(false);
   };
+
+  useEffect(() => {
+    const translate = async () => {
+      const savedLang = localStorage.getItem("lang");
+      if (savedLang != "en" && currentUser?.firstname) {
+        const translated = await axios.post(`${backendPortURL}translate`, {
+          text: currentUser?.firstname,
+          to: savedLang,
+        });
+        // console.log("translated", translated.data[0].translations[0].text);
+        setFirstName(translated?.data[0].translations[0].text);
+      } else {
+        console.log("currentUser?.firstName", currentUser?.firstname);
+        setFirstName(currentUser?.firstname);
+      }
+    };
+
+    if (currentUser?.firstname) {
+      translate();
+    }
+  }, [currentUser.firstname]);
 
   return (
     <div className="w-full h-full text-[#334E83] pt-2.5 bg-white rounded-t-3xl flex flex-col justify-start overflow-y-auto">
@@ -73,8 +96,8 @@ const Settings = () => {
             {loading ? (
               <div className="h-6 w-32 bg-gray-300 rounded animate-pulse"></div>
             ) : (
-              <h2 className="text-xl 2xl:text-3xl font-bold font-acme tracking-wider text-gray-900 uppercase">
-                {translatedName || currentUser?.firstname}
+              <h2 className="text-xl 2xl:text-2xl font-bold font-acme tracking-wider text-gray-900 uppercase">
+                {firstName}
               </h2>
             )}
 
@@ -87,7 +110,11 @@ const Settings = () => {
             )}
           </div>
           {!loading && (
-            <img src="./qrcode.png" alt="QR-Code" className="size-6 2xl:size-8" />
+            <img
+              src="./qrcode.png"
+              alt="QR-Code"
+              className="size-6 2xl:size-8"
+            />
           )}
         </div>
       </div>
@@ -98,6 +125,24 @@ const Settings = () => {
           <SkeletonOptions />
         ) : (
           <>
+            {/* Language Selection Option */}
+            <div
+              className="flex items-center gap-5 px-5 py-3 rounded-lg cursor-pointer"
+              onClick={() => setShowModal(true)}
+            >
+              <div className="flex items-center p-2.5 2xl:p-3 2xl:text-3xl justify-center bg-gray-100 rounded-full">
+                <TfiWorld />
+              </div>
+              <div className="flex flex-col">
+                <label className="text-gray-900 font-medium text-base 2xl:text-xl font-poppins">
+                  {t("App Language")}
+                </label>
+                <p className="text-gray-500 2xl:text-base">
+                  {languageOptions.find(({ code }) => code === language)
+                    ?.label || "English 🇬🇧"}
+                </p>
+              </div>
+            </div>
             <SettingOption
               icon={<BsKey />}
               title={"Account"}
@@ -126,25 +171,6 @@ const Settings = () => {
             <SettingOption icon={<BsPeople />} title={"Invite a friend"} />
           </>
         )}
-
-        {/* Language Selection Option */}
-        <div
-          className="flex items-center gap-5 px-5 py-3 rounded-lg cursor-pointer"
-          onClick={() => setShowModal(true)}
-        >
-          <div className="flex items-center p-2.5 justify-center bg-gray-100 rounded-full">
-            <TfiWorld />
-          </div>
-          <div className="flex flex-col">
-            <label className="text-gray-900 font-medium text-base font-poppins">
-              {t("App Language") || "App Language"}
-            </label>
-            <p className="text-gray-500">
-              {languageOptions.find(({ code }) => code === language)?.label ||
-                "English 🇬🇧"}
-            </p>
-          </div>
-        </div>
       </div>
 
       {/* Language Modal */}
@@ -204,7 +230,11 @@ const SettingOption = ({ icon, title, subtitle }) => {
         <h3 className="text-gray-900 font-medium text-base 2xl:text-xl font-poppins">
           {translatedTitle}
         </h3>
-        {subtitle && <p className="text-sm 2xl:text-base text-gray-500">{translatedSubtitle}</p>}
+        {subtitle && (
+          <p className="text-sm 2xl:text-base text-gray-500">
+            {translatedSubtitle}
+          </p>
+        )}
       </div>
     </div>
   );

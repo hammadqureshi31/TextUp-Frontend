@@ -68,7 +68,7 @@ const FooterMenu = () => {
         <AiOutlineMessage className="mx-auto text-2xl cursor-pointer" />
         <h1 className="font-poppins text-sm">Messages</h1>
         {/* Unread Badge */}
-        {unreadMessages > 0 && (
+        {unreadMessages.length > 0 && (
           <div className="absolute -top-1 right-3 bg-[#F04A4C] text-xs text-white font-poppins px-1.5 py-0.5 rounded-full flex items-center justify-center">
             {unreadMessages?.length}
           </div>
@@ -86,7 +86,7 @@ const FooterMenu = () => {
         <MdGroups className="mx-auto text-2xl cursor-pointer" />
         <h1 className="font-poppins text-sm">Groups</h1>
         {/* Unread Badge */}
-        {groupUnReads > 0 && (
+        {groupUnReads.length > 0 && (
           <div className="absolute -top-1 right-0 bg-[#F04A4C] text-xs text-white font-poppins px-1.5 py-0.5 rounded-full flex items-center justify-center">
             {groupUnReads?.length}
           </div>

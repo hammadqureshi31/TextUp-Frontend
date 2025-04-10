@@ -4,8 +4,11 @@ import { useNavigate } from "react-router";
 import { MdOutlineGroupAdd } from "react-icons/md";
 import { fetchUserDetails } from "../../redux/slice/userSlice";
 import GroupCard from "../../pages/Groups/GroupCard";
+import { useTranslation } from "react-i18next";
 
 const GroupList = ({currentTab}) => {
+  
+  const { t } = useTranslation();
   const selector = useSelector((state) => state.currentUser.data);
   const [user, setUser] = useState();
   const [groups, setGroups] = useState(null);
@@ -41,7 +44,7 @@ const GroupList = ({currentTab}) => {
       <div className="h-1 w-8 2xl:w-12 bg-gray-300 mx-auto rounded-full"></div>
 
       <div
-        className="flex items-center justify-start gap-5 p-4 cursor-pointer"
+        className="flex items-center justify-start gap-5 py-4 px-5 w-full cursor-pointer"
         onClick={() => {
           handleNavigate();
         }}
@@ -49,8 +52,8 @@ const GroupList = ({currentTab}) => {
         <div className="p-3 border border-dashed rounded-full bg-[#334E83]">
           <MdOutlineGroupAdd className=" text-2xl text-white 2xl:text-3xl" />
         </div>
-        <h3 className="font-semibold font-poppins text-[#334E83] 2xl:text-2xl">
-          Create New Group
+        <h3 className="font-semibold font-poppins text-[#334E83] 2xl:text-xl">
+          {t("Create New Group")}
         </h3>
       </div>
 

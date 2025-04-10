@@ -8,6 +8,7 @@ import { getAllUsers } from "../../redux/slice/allUsersSlice";
 import { FiUserPlus } from "react-icons/fi";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { fetchUserDetails } from "../../redux/slice/userSlice";
+import { useTranslation } from "react-i18next";
 
 
 const ContactList = ({
@@ -25,6 +26,7 @@ const ContactList = ({
   const [user, setUser] = useState();
   const [loading, setLoading] = useState(true);
   const [buttonLoading, setButtonLoading] = useState(null);
+  const { t } = useTranslation();
 
   console.log(selector.contactedUsers)
 
@@ -47,7 +49,7 @@ const ContactList = ({
         setContact(filteredContacts);
       }
     }
-  }, [user, allUsers]);
+  }, [user, allUsers, selector.unread]);
 
   const addNewUserContact = async (addContact) => {
     setButtonLoading(addContact);
@@ -70,7 +72,7 @@ const ContactList = ({
       <div className=" relative w-full h-full text-[#334E83] pt-2.5 bg-white rounded-t-3xl flex flex-col justify-start text-center">
         <div className="h-1 w-8 2xl:w-12 bg-gray-300 mx-auto rounded-r-full rounded-l-full"></div>
 
-        <div className="flex items-center justify-start gap-5 p-4 cursor-pointer"
+        <div className="flex items-center justify-start gap-5 py-4 px-5 cursor-pointer"
         onClick={() => {
           setOpenModal((prev)=>!prev);
         }}>
@@ -79,8 +81,8 @@ const ContactList = ({
               className=" text-xl text-white 2xl:text-3xl"
             />
           </div>
-          <h3 className="font-semibold font-poppins text-[#334E83] 2xl:text-2xl">
-            New Contact
+          <h3 className="font-semibold font-poppins text-[#334E83] 2xl:text-xl">
+            {t("New Contact")}
           </h3>
         </div>
 
@@ -116,7 +118,7 @@ const ContactList = ({
               <IoArrowBackOutline />
             </div>
             <h2 className="text-lg font-semibold tracking-wide">
-              Add New Contact
+              {t("Add New Contact")}
             </h2>
           </div>
 
@@ -152,13 +154,13 @@ const ContactList = ({
                       onClick={() => addNewUserContact(contact._id)}
                       disabled={buttonLoading}
                     >
-                      {buttonLoading === contact._id ? "Adding..." : "Add"}
+                      {buttonLoading === contact._id ? (t("Adding...")) : (t("Add"))}
                     </button>
                   </div>
                 ))
               ) : (
                 <p className="text-center text-gray-500">
-                  No contacts available
+                  {t("No contacts available")}
                 </p>
               )}
             </div>

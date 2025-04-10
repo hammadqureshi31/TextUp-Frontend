@@ -8,6 +8,8 @@ import {
   fetchAllMessages,
   resetMessages,
 } from "../../redux/slice/messagesSlice";
+import axios from "axios";
+import { backendPortURL } from "../../config";
 
 const ChatCard = ({ singleContact, loading, currentTab }) => {
   const [lastMessage, setLastMessage] = useState(null);
@@ -17,6 +19,7 @@ const ChatCard = ({ singleContact, loading, currentTab }) => {
   const allMessages = useSelector((state) => state.allMessages);
   const currentUser = useSelector((state) => state.currentUser.data);
   const [firstName, setirstName] = useState("");
+  const [translatedLastMsg, setTranslatedLastMsg] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const setupSocket = true;
@@ -47,44 +50,16 @@ const ChatCard = ({ singleContact, loading, currentTab }) => {
         }
       });
     }
-
-     if (currentUser?.unread.length > 0) {
-      const updateUnread = currentUser?.unread.filter((msg)=>msg?.sender === singleContact?._id)
-      setUnreadCount(updateUnread || 0);
-    }
   }, [userLastMsgs]);
 
-  // console.log("LastMessage", lastMessage);
-
-  // useEffect(() => {
-  //   if (!currentUser?.unread) {
-  //     console.log("line 34", currentUser.unread.length);
-  //     currentUser.unread && setUnreadCount(currentUser.unread?.length);
-  //   }
-
-  //   if (allMessages?.length > 0) {
-  //     // console.log(allMessages);
-  //     const relatedMessages = allMessages.filter(
-  //       (msg) =>
-  //         (msg.sender?._id === singleContact?._id &&
-  //           msg.receiver === currentUser.details?._id && msg.mode == "inbox") ||
-  //         (msg.receiver === singleContact?._id &&
-  //           msg.sender?._id === currentUser.details?._id && msg.mode == "inbox")
-  //     );
-
-  //     if (relatedMessages?.length > 0) {
-  //       const latestMsg = relatedMessages[relatedMessages.length - 1];
-  //       // console.log(latestMsg);
-  //       setLastMessage(latestMsg);
-
-  //       const newUnreadCount = relatedMessages.filter(
-  //         (msg) => msg.receiver === currentUser?.details?._id && !msg.unread
-  //       ).length;
-  //       setUnreadCount(newUnreadCount);
-  //     }
-  //   }
-
-  // }, [allMessages, currentUser, singleContact]);
+  useEffect(()=>{
+    if (currentUser?.unread.length > 0) {
+      const updateUnread = currentUser?.unread.filter(
+        (msg) => msg?.sender === singleContact?._id
+      );
+      setUnreadCount(updateUnread || 0);
+    }
+  },[currentUser?.unread?.length])
 
   const handleClick = () => {
     if (singleContact?._id) {
@@ -99,9 +74,48 @@ const ChatCard = ({ singleContact, loading, currentTab }) => {
 
   useEffect(() => {
     if (singleContact?.firstname) {
-      setirstName(singleContact?.firstname);
+      const translate = async () => {
+        const savedLang = localStorage.getItem("lang");
+        if (savedLang != "en") {
+          const translated = await axios.post(`${backendPortURL}translate`, {
+            text: singleContact?.firstname,
+            to: savedLang,
+          });
+          // console.log("translated", translated.data[0].translations[0].text);
+          setirstName(translated?.data[0].translations[0].text);
+        } else {
+          setirstName(singleContact?.firstname);
+        }
+      };
+
+      translate();
+      // setirstName(singleContact?.firstname);
     }
   }, [singleContact]);
+
+
+  useEffect(() => {
+    if (lastMessage?.content?.length !== 0 && lastMessage?.content) {
+      const translate = async () => {
+        const savedLang = localStorage.getItem("lang");
+        
+        // console.log("lastMessage?.content", lastMessage?.content);
+        if (savedLang != "en") {
+          const translated = await axios.post(`${backendPortURL}translate`, {
+            text: lastMessage?.content,
+            to: savedLang,
+          });
+          // console.log("translated", translated.data[0].translations[0].text);
+          setTranslatedLastMsg(translated?.data[0].translations[0].text);
+        } else {
+          setTranslatedLastMsg(lastMessage?.content);
+        }
+      };
+
+      translate();
+      // setirstName(singleContact?.firstname);
+    }
+  }, [lastMessage]);
 
   return (
     <div
@@ -117,7 +131,7 @@ const ChatCard = ({ singleContact, loading, currentTab }) => {
           <img
             src={singleContact?.profilePicture || "./profile-placeholder.webp"}
             alt={`${singleContact?.firstname}'s profile`}
-            className="w-12 h-12 rounded-full object-cover 2xl:w-20 2xl:h-20"
+            className="w-12 h-12 rounded-full object-cover 2xl:w-16 2xl:h-16"
           />
         )}
       </div>
@@ -127,7 +141,7 @@ const ChatCard = ({ singleContact, loading, currentTab }) => {
           {loading ? (
             <div className="w-32 h-6 bg-gray-200 rounded-md animate-pulse"></div>
           ) : (
-            <h1 className="text-base sm:text-lg 2xl:text-3xl font-semibold text-[#334E83] font-poppins tracking-tighter">
+            <h1 className="text-base sm:text-lg 2xl:text-2xl font-semibold text-[#334E83] font-poppins tracking-tighter">
               {firstName.slice(0, 1).toUpperCase()}
               {firstName.slice(1)}
             </h1>
@@ -145,7 +159,7 @@ const ChatCard = ({ singleContact, loading, currentTab }) => {
           )}
         </div>
 
-        <div className="flex justify-between items-center mt-1 2xl:mt-2">
+        <div className="flex justify-between items-center mt-1">
           {loading ? (
             <div className="w-40 h-4 bg-gray-200 rounded-md animate-pulse"></div>
           ) : (
@@ -166,9 +180,9 @@ const ChatCard = ({ singleContact, loading, currentTab }) => {
                       <span>image</span>
                     </div>
                   ) : lastMessage.content?.length > 35 ? (
-                    `${lastMessage.content?.substring(0, 35)}...`
+                    `${translatedLastMsg?.substring(0, 35)}...`
                   ) : (
-                    lastMessage.content
+                    translatedLastMsg
                   )
                 ) : (
                   "No messages yet"
@@ -184,9 +198,9 @@ const ChatCard = ({ singleContact, loading, currentTab }) => {
                     <span>image</span>
                   </div>
                 ) : lastMessage.content?.length > 35 ? (
-                  `${lastMessage.content?.substring(0, 33)}...`
+                  `${translatedLastMsg?.substring(0, 33)}...`
                 ) : (
-                  lastMessage.content
+                  translatedLastMsg
                 )
               ) : (
                 "No messages yet"

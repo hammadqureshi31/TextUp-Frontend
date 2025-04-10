@@ -1,57 +1,280 @@
-// src/i18n.js
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import axios from "axios";
 
-const LIBRETRANSLATE_URL = "https://libretranslate.de/translate"; // Free public instance
 
-// Function to fetch translation from LibreTranslate API
-const fetchTranslation = async (text, targetLang) => {
-  try {
-    const response = await axios.post(LIBRETRANSLATE_URL, {
-      q: text,
-      source: "en", // Assuming default text is in English
-      target: targetLang,
-      format: "text",
-    });
-
-    return response.data.translatedText;
-  } catch (error) {
-    console.error("Translation error:", error);
-    return text; // Return original text if translation fails
-  }
-};
-
-// Custom translation function
-const customTFunction = (key) => {
-  const currentLang = i18n.language;
-
-  if (currentLang === "en") return key; // No need to translate if English
-
-  // Check if translation is already cached
-  if (i18n.store.data[currentLang]?.translation?.[key]) {
-    return i18n.store.data[currentLang].translation[key]; // Return synchronously
-  }
-
-  // If not cached, return the key immediately and fetch the translation in the background
-  fetchTranslation(key, currentLang).then((translatedText) => {
-    // Store translation in i18next cache
-    if (!i18n.store.data[currentLang]) i18n.store.data[currentLang] = { translation: {} };
-    i18n.store.data[currentLang].translation[key] = translatedText;
-    // Trigger a re-render if necessary (e.g., using a state update)
-  });
-
-  return key; // Return the key synchronously while fetching the translation
-};
-
-// Initialize i18next
-i18n.use(initReactI18next).init({
-  lng: localStorage.getItem("lang") || "en",
-  fallbackLng: "en",
-  interpolation: { escapeValue: false },
+window.addEventListener("load", () => {
+  const savedLang = localStorage.getItem("lang") || "en";
+  i18n.changeLanguage(savedLang);
 });
 
-// Override default `t()` function
-i18n.t = customTFunction;
+const resources = {
+  en: {
+    translation: {
+      welcome: "Welcome to the Chat App",
+      send: "Send",
+      typeMessage: "Type a message...",
+      // Settings
+      "Never give up": "Never give up",
+      Account: "Account",
+      "Privacy, security, change number": "Privacy, security, change number",
+      Chat: "Chat",
+      "Chat history, theme, wallpapers": "Chat history, theme, wallpapers",
+      Notifications: "Notifications",
+      "Messages, group and oters": "Messages, group and others",
+      Help: "Help",
+      "Help center, contact us, privacy": "Help center, contact us, privacy",
+      "Storage and data": "Storage and data",
+      "Network usage, storage usage": "Network usage, storage usage",
+      "Invite a friend": "Invite a friend",
+      "App Language": "App Language",
+      "Select Language": "Select Language",
+      "Create New Group": "Create New Group",
+      "New Contact": "New Contact",
+      Photo: "Photo",
+      Document: "Document",
+      Poll: "Poll",
+      Camera: "Camera",
+      "Add New Contact": "Add New Contact",
+      "No contacts available": "No contacts available",
+      "Create Group": "Create Group",
+      "Make Group for": "Make Group for",
+      "Team Work": "Team Work",
+      "Group work": "Group work",
+      "Group Name": "Group Name",
+      "Group Description": "Group Description",
+      "Group Admin": "Group Admin",
+      "Invite Members": "Invite Members",
+      Create: "Create",
+      "Search people or groups...": "Search people or groups...",
+      Chats: "Chats",
+      "Hey there! I am using TextUp.": "Hey there! I am using TextUp.",
+      TextUp: "TextUp",
+      "End-to-end encrypted": "End-to-end encrypted",
+      "Hey there! 👋": "Hey there! 👋",
+      "What’s up? 😊": "What’s up? 😊",
+      "Let’s chat! 🗨️": "Let’s chat! 🗨️",
+      "Messages that fly! 🚀": "Messages that fly! 🚀",
+      "No results found for": "No results found for",
+      Add: "Add",
+      Adding: "Adding",
+    },
+  },
+  es: {
+    translation: {
+      welcome: "Bienvenido a la aplicación de chat",
+      send: "Enviar",
+      typeMessage: "Escribe un mensaje...",
+      // Settings
+      "Never give up": "Nunca te rindas",
+      Account: "Cuenta",
+      "Privacy, security, change number":
+        "Privacidad, seguridad, cambiar número",
+      Chat: "Chat",
+      "Chat history, theme, wallpapers": "Historial de chat, tema, fondos",
+      Notifications: "Notificaciones",
+      "Messages, group and oters": "Mensajes, grupo y otros",
+      Help: "Ayuda",
+      "Help center, contact us, privacy":
+        "Centro de ayuda, contáctanos, privacidad",
+      "Storage and data": "Almacenamiento y datos",
+      "Network usage, storage usage": "Uso de red, uso de almacenamiento",
+      "Invite a friend": "Invitar a un amigo",
+      "App Language": "Idioma de la aplicación",
+      "Select Language": "Seleccionar idioma",
+      "Create New Group": "Crear nuevo grupo",
+      "New Contact": "Nuevo contacto",
+      Photo: "Foto",
+      Document: "Documento",
+      Poll: "Encuesta",
+      Camera: "Cámara",
+      "Add New Contact": "Agregar nuevo contacto",
+      "No contacts available": "No hay contactos disponibles",
+      "Create Group": "Crear grupo",
+      "Make Group for": "Crear grupo para",
+      "Team Work": "trabajo en equipo",
+      "Group work": "Trabajo en grupo",
+      "Group Name": "Nombre del grupo",
+      "Group Description": "Descripción del grupo",
+      "Group Admin": "Administrador del grupo",
+      "Invite Members": "Invitar miembros",
+      Create: "Crear",
+      "Search people or groups...": "Buscar personas o grupos...",
+      Chats: "Chats",
+      "Hey there! I am using TextUp.": "¡Hola! Estoy usando TextUp.",
+      TextUp: "TextUp",
+      "End-to-end encrypted": "Encriptado de extremo a extremo",
+      "Hey there! 👋": "¡Hola! 👋",
+      "What’s up? 😊": "¿Qué tal? 😊",
+      "Let’s chat! 🗨️": "¡Hablemos! 🗨️",
+      "Messages that fly! 🚀": "¡Mensajes que vuelan! 🚀",
+      "No results found for": "No se encontraron resultados para",
+      Add: "Añadir",
+      Adding: "Añadiendo",
+    },
+  },
+  fr: {
+    translation: {
+      welcome: "Bienvenue dans l'application de chat",
+      send: "Envoyer",
+      typeMessage: "Tapez un message...",
+      // Settings
+      "Never give up": "N'abandonne jamais",
+      Account: "Compte",
+      "Privacy, security, change number":
+        "Confidentialité, sécurité, changer de numéro",
+      Chat: "Discussion",
+      "Chat history, theme, wallpapers":
+        "Historique des discussions, thème, fonds",
+      Notifications: "Notifications",
+      "Messages, group and oters": "Messages, groupe et autres",
+      Help: "Aide",
+      "Help center, contact us, privacy":
+        "Centre d'aide, contactez-nous, confidentialité",
+      "Storage and data": "Stockage et données",
+      "Network usage, storage usage":
+        "Utilisation du réseau, utilisation du stockage",
+      "Invite a friend": "Inviter un ami",
+      "App Language": "Langue de l'application",
+      "Select Language": "Choisir la langue",
+      "Create New Group": "Créer un nouveau groupe",
+      "New Contact": "Nouveau contact",
+      Photo: "Photo",
+      Document: "Document",
+      Poll: "Sondage",
+      Camera: "Caméra",
+      "Add New Contact": "Ajouter un nouveau contact",
+      "No contacts available": "Aucun contact disponible",
+      "Create Group": "Créer un groupe",
+      "Make Group for": "Créer un groupe pour le",
+      "Team Work": "travail en équipe",
+      "Group work": "Travail en groupe",
+      "Group Name": "Nom du groupe",
+      "Group Description": "Description du groupe",
+      "Group Admin": "Administrateur du groupe",
+      "Invite Members": "Inviter des membres",
+      Create: "Créer",
+      "Search people or groups...":
+        "Rechercher des personnes ou des groupes...",
+      Chats: "Chats",
+      "Hey there! I am using TextUp.": "Salut ! J'utilise TextUp.",
+      TextUp: "TextUp",
+      "End-to-end encrypted": "Cryptage de bout en bout",
+      "Hey there! 👋": "Salut ! 👋",
+      "What’s up? 😊": "Quoi de neuf ? 😊",
+      "Let’s chat! 🗨️": "Discutons ! 🗨️",
+      "Messages that fly! 🚀": "Des messages qui volent ! 🚀",
+      "No results found for": "Aucun résultat trouvé pour",
+      Add: "Ajouter",
+      Adding: "Ajout",
+    },
+  },
+  ru: {
+    translation: {
+      "Never give up": "Никогда не сдавайся",
+      Account: "Аккаунт",
+      "Privacy, security, change number":
+        "Конфиденциальность, безопасность, смена номера",
+      Chat: "Чат",
+      "Chat history, theme, wallpapers": "История чатов, темы, обои",
+      Notifications: "Уведомления",
+      "Messages, group and oters": "Сообщения, группы и другое",
+      Help: "Помощь",
+      "Help center, contact us, privacy":
+        "Центр помощи, связь с нами, конфиденциальность",
+      "Storage and data": "Хранилище и данные",
+      "Network usage, storage usage": "Использование сети, хранилище",
+      "Invite a friend": "Пригласить друга",
+      "App Language": "Язык приложения",
+      "Select Language": "Выберите язык",
+      "Create New Group": "Создать новую группу",
+      "New Contact": "Новый контакт",
+      Photo: "Фото",
+      Document: "Документ",
+      Poll: "Опрос",
+      Camera: "Камера",
+      "Add New Contact": "Добавить новый контакт",
+      "No contacts available": "Нет доступных контактов",
+      "Create Group": "Создать группу",
+      "Make Group for": "Создать группу для",
+      "Team Work": "работы в команде",
+      "Group work": "Работа в группе",
+      "Group Name": "Название группы",
+      "Group Description": "Описание группы",
+      "Group Admin": "Администратор группы",
+      "Invite Members": "Пригласить участников",
+      Create: "Создать",
+      "Search people or groups...": "Поиск людей или групп...",
+      Chats: "Чаты",
+      "Hey there! I am using TextUp.": "Привет! Я использую TextUp.",
+      TextUp: "TextUp",
+      "End-to-end encrypted": "Шифрование от конца до конца",
+      "Hey there! 👋": "Привет! 👋",
+      "What’s up? 😊": "Что нового? 😊",
+      "Let’s chat! 🗨️": "Давайте поговорим! 🗨️",
+      "Messages that fly! 🚀": "Сообщения, которые летают! 🚀",
+      "No results found for": "Результаты не найдены для",
+      Add: "Добавить",
+      Adding: "Добавление",
+    },
+  },
+  pt: {
+    translation: {
+      "Never give up": "Nunca desista",
+      Account: "Conta",
+      "Privacy, security, change number":
+        "Privacidade, segurança, alterar número",
+      Chat: "Conversa",
+      "Chat history, theme, wallpapers":
+        "Histórico de conversas, tema, papéis de parede",
+      Notifications: "Notificações",
+      "Messages, group and oters": "Mensagens, grupo e outros",
+      Help: "Ajuda",
+      "Help center, contact us, privacy":
+        "Central de ajuda, entre em contato, privacidade",
+      "Storage and data": "Armazenamento e dados",
+      "Network usage, storage usage": "Uso da rede, uso do armazenamento",
+      "Invite a friend": "Convidar um amigo",
+      "App Language": "Idioma do aplicativo",
+      "Select Language": "Selecionar idioma",
+      "Create New Group": "Criar Novo Grupo",
+      "New Contact": "Novo Contato",
+      Photo: "Foto",
+      Document: "Documento",
+      Poll: "Pesquisa",
+      Camera: "Câmera",
+      "Add New Contact": "Adicionar Novo Contato",
+      "No contacts available": "Nenhum contato disponível",
+      "Create Group": "Criar Grupo",
+      "Make Group for": "Criar Grupo para",
+      "Team Work": "Trabalho em Equipe",
+      "Group work": "Trabalho em Grupo",
+      "Group Name": "Nome do Grupo",
+      "Group Description": "Descrição do Grupo",
+      "Group Admin": "Administrador do Grupo",
+      "Invite Members": "Convidar Membros",
+      Create: "Criar",
+      "Search people or groups...": "Pesquisar pessoas ou grupos...",
+      Chats: "Chats",
+      "Hey there! I am using TextUp.": "Oi! Estou usando TextUp.",
+      TextUp: "TextUp",
+      "End-to-end encrypted": "Criptografado de ponta a ponta",
+      "Hey there! 👋": "Oi! 👋",
+      "What’s up? 😊": "E aí? 😊",
+      "Let’s chat! 🗨️": "Vamos conversar! 🗨️",
+      "Messages that fly! 🚀": "Mensagens que voam! 🚀",
+      "No results found for": "Nenhum resultado encontrado para",
+      Add: "Adicionar",
+      Adding: "Adicionando",
+    },
+  },
+};
+
+i18n.use(initReactI18next).init({
+  resources,
+  lng: "en",
+  interpolation: {
+    escapeValue: false, // React already does escaping
+  },
+});
 
 export default i18n;

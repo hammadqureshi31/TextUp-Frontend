@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { TfiComment } from "react-icons/tfi";
 import { CiLock } from "react-icons/ci";
+import { useTranslation } from "react-i18next";
 
 // Message Bubble Component
 const MessageBubble = ({ text, delay, xMove }) => {
   const [visible, setVisible] = useState(true);
-  const animationDuration = 10; 
+  const animationDuration = 10;
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -71,6 +72,7 @@ const MessageBubble = ({ text, delay, xMove }) => {
 };
 
 const EmptyChatScreen = () => {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col overflow-hidden z-20 items-center justify-center h-screen bg-gray-100 relative w-full">
       {/* Logo Section */}
@@ -84,7 +86,7 @@ const EmptyChatScreen = () => {
         <div className="relative">
           <TfiComment className="mx-auto w-32 h-32 opacity-5 mb-20" />
           <h1 className="absolute left-1/2 top-1/4 text-3xl pt-10 -translate-x-1/2 -translate-y-1/2 font-semibold text-[#334E83] opacity-30 font-acme">
-            TextUp
+            {t("TextUp")}
           </h1>
         </div>
       </div>
@@ -92,16 +94,16 @@ const EmptyChatScreen = () => {
       {/* ✨ Whimsical Floating Chat ✨ */}
       <div className="absolute bottom-20 w-full flex justify-center">
         <motion.div className="relative w-fit h-40">
-          <MessageBubble text="Hey there! 👋" delay={0} xMove={-50} />
-          <MessageBubble text="What’s up? 😊" delay={6} xMove={50} />
-          <MessageBubble text="Let’s chat! 🗨️" delay={12} xMove={-100} />
-          <MessageBubble text="Messages that fly! 🚀" delay={18} xMove={100} />
+          <MessageBubble text={t("Hey there! 👋")} delay={0} xMove={-50} />
+          <MessageBubble text={t("What’s up? 😊")} delay={6} xMove={50} />
+          <MessageBubble text={t("Let’s chat! 🗨️")} delay={12} xMove={-100} />
+          <MessageBubble text={t("Messages that fly! 🚀")} delay={18} xMove={100} />
         </motion.div>
       </div>
 
       {/* Footer */}
       <div className="absolute bottom-5 text-sm opacity-50">
-        <CiLock className="inline-block text-base mb-0.5" /> End-to-end encrypted
+        <CiLock className="inline-block text-base mb-0.5" /> {t("End-to-end encrypted")}
       </div>
     </div>
   );

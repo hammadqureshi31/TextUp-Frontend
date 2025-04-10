@@ -16,7 +16,7 @@ import { SocketProvider } from "./context/SocketProvider";
 import Search from "./components/Search/Search";
 import ForgotPassword from "./pages/Auth/ForgotPassword";
 import ResetPassword from "./pages/Auth/ResetPassword";
-// import "./i18n";
+import "./i18n";
 
 function App() {
   return (

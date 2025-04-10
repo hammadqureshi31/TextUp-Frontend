@@ -39,6 +39,7 @@ const useSocket = (setupSocket, newChatId) => {
       socket.current.on("read-message", () => {
         console.log("Messages marked as read");
         dispatch(fetchUserDetails())
+        setfetchMsgs(true);
         // if (newChatId) {
         //   dispatch(fetchAllMessages(newChatId, user));
         // }
@@ -106,7 +107,7 @@ const useSocket = (setupSocket, newChatId) => {
   };
 
   const setLastSeenAndOnlineEvent = (online) => {
-    if (user?._id) {
+    if (user?._id) { 
       // console.log("Updating online status");
       socket.current.emit("set-lastseen-and-online", {
         userId: user?._id,

@@ -4,6 +4,9 @@ import { useSelector } from "react-redux";
 import { MdGroups } from "react-icons/md";
 import { useNavigate } from "react-router";
 import { MdArrowBackIos } from "react-icons/md";
+import { useTranslation } from "react-i18next";
+import axios from "axios";
+import { backendPortURL } from "../../config";
 
 const Search = ({ currentTab }) => {
   const allUser = useSelector((state) => state.allUsers.data);
@@ -13,7 +16,12 @@ const Search = ({ currentTab }) => {
   const [loading, setLoading] = useState(true);
   const [selectedChat, setSelectedChat] = useState(null);
   const [displayContacts, setDisplayContacts] = useState([]);
+  const [translatedNames, setTranslatedNames] = useState({});
+  const [translatedDesc, setTranslatedDesc] = useState({});
+
   const navigate = useNavigate();
+
+  const { t } = useTranslation();
 
   // Filter user contacts based on currentUser's contactedUsers
   const handleFilterUserContacts = useCallback(() => {
@@ -35,7 +43,8 @@ const Search = ({ currentTab }) => {
   useEffect(() => {
     const filteredSearch = setTimeout(() => {
       setLoading(false);
-      if (search.length == 0 || search.trim() === '') return setDisplayContacts(userContacts);
+      if (search.length == 0 || search.trim() === "")
+        return setDisplayContacts(userContacts);
       else {
         setDisplayContacts(
           userContacts?.filter(
@@ -63,6 +72,82 @@ const Search = ({ currentTab }) => {
     }
   };
 
+  useEffect(() => {
+    const savedLang = localStorage.getItem("lang");
+
+    const translateAllNames = async () => {
+      if (savedLang !== "en") {
+        const newTranslations = {};
+
+        for (const user of displayContacts) {
+          const originalText = user?.firstname || user?.name;
+          try {
+            const res = await axios.post(`${backendPortURL}translate`, {
+              text: originalText,
+              to: savedLang,
+            });
+
+            const translatedText = res?.data[0]?.translations[0]?.text;
+            newTranslations[user._id] = translatedText || originalText;
+          } catch (error) {
+            console.error("Translation error for", user, error);
+            newTranslations[user._id] = originalText;
+          }
+        }
+
+        setTranslatedNames(newTranslations);
+      } else {
+        const englishNames = {};
+        for (const user of displayContacts) {
+          englishNames[user?._id] = user?.firstname || user?.name;
+        }
+        setTranslatedNames(englishNames);
+      }
+    };
+
+    if (displayContacts.length > 0) {
+      translateAllNames();
+    }
+  }, [displayContacts]);
+
+  useEffect(() => {
+    const savedLang = localStorage.getItem("lang");
+
+    const translateAllDesc = async () => {
+      if (savedLang !== "en") {
+        const newTranslations = {};
+        for (const user of displayContacts) {
+          const originalText = user?.description;
+          try {
+            const res = await axios.post(`${backendPortURL}translate`, {
+              text: originalText,
+              to: savedLang,
+            });
+            const translatedText = res?.data[0]?.translations[0]?.text;
+            newTranslations[user?._id] = translatedText || originalText;
+          } catch (error) {
+            console.error("Translation error for", user, error);
+            newTranslations[user?._id] = originalText;
+          }
+
+          setTranslatedDesc(newTranslations);
+        }
+      } else {
+        const newEnglishDesc = {};
+        for (const user of displayContacts) {
+          newEnglishDesc[user?._id] = user?.description;
+        }
+
+        setTranslatedDesc(newEnglishDesc);
+      }
+    };
+
+    if (displayContacts.length > 0) {
+      translateAllDesc();
+    }
+
+  }, [displayContacts]);
+
   return (
     <div className="min-h-screen bg-white flex-col justify-start items-start px-3 pt-4 w-full md:max-w-sm 2xl:max-w-md">
       {/* Search Input */}
@@ -78,14 +163,14 @@ const Search = ({ currentTab }) => {
           <CiSearch className="text-3xl" />
           <input
             type="search"
-            placeholder="Search people or groups..."
+            placeholder={t("Search people or groups...")}
             className="w-full bg-transparent focus:outline-none"
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
       </div>
 
-      <h3 className="font-poppins mt-4">Chats</h3>
+      <h3 className="font-poppins mt-4">{t("Chats")}</h3>
       <ul>
         {loading ? (
           // Loading Skeleton
@@ -126,12 +211,12 @@ const Search = ({ currentTab }) => {
               </div>
               <div className="ml-3 flex flex-col w-full">
                 <h1 className="text-base sm:text-lg font-semibold text-[#334E83] font-poppins tracking-tighter">
-                  {user?.firstname || user.name}
+                  {translatedNames[user?._id]}
                 </h1>
                 <p className="text-sm truncate opacity-40 font-roboto overflow-hidden">
                   {user?.description
-                    ? user.description
-                    : "Hey there! I am using TextUp."}
+                    ? translatedDesc[user?._id]
+                    : t("Hey there! I am using TextUp.")}
                 </p>
               </div>
             </div>
@@ -139,7 +224,7 @@ const Search = ({ currentTab }) => {
         ) : (
           // No Results Found
           <p className="text-sm text-center truncate opacity-40 font-roboto overflow-hidden">
-            No results found for '{search}'
+            {t("No results found for")} '{search}'
           </p>
         )}
       </ul>

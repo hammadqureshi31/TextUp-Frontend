@@ -5,11 +5,15 @@ import { selectGroup } from "../../redux/slice/selectedGroup";
 import { IoImageOutline } from "react-icons/io5";
 import useSocket from "../../hooks/useSocket";
 import { MdGroups } from "react-icons/md";
+import axios from "axios";
+import { backendPortURL } from "../../config";
 
 const GroupCard = ({ grp, currentTab }) => {
   const selectedGroup = useSelector((state) => state.selectedGroup);
   const [lastMessage, setLastMessage] = useState(null);
   const [userLastMsgs, setUserLastMsgs] = useState();
+  const [translatedLastMsg, setTranslatedLastMsg] = useState("");
+  const [groupName, setGroupName] = useState("");
   const [unreadCount, setUnreadCount] = useState(0);
   const allMessages = useSelector((state) => state.allMessages.data);
   const currentUser = useSelector((state) => state.currentUser.data);
@@ -51,44 +55,49 @@ const GroupCard = ({ grp, currentTab }) => {
   }, [userLastMsgs]);
 
 
-  // useEffect(() => {
-  //   if (!allMessages) {
-  //     if (currentUser?.lastMessages?.length > 0) {
-  //       const displayMsg = currentUser.lastMessages.filter(
-  //         (msg) => msg.receiver === grp?._id
-  //       );
+  
+  useEffect(() => {
+    if (grp?.name) {
+      const translate = async () => {
+        const savedLang = localStorage.getItem("lang");
+        if (savedLang != "en") {
+          const translated = await axios.post(`${backendPortURL}translate`, {
+            text: grp?.name,
+            to: savedLang,
+          });
+          // console.log("translated", translated.data[0].translations[0].text);
+          setGroupName(translated?.data[0].translations[0].text);
+        } else {
+          setGroupName(grp?.name);
+        }
+      };
 
-  //       if (displayMsg.length > 0) {
-  //         setLastMessage(displayMsg[displayMsg.length - 1]);
-  //       } else {
-  //         setLastMessage(
-  //           currentUser.lastMessages[currentUser.lastMessages.length - 1]
-  //         );
-  //       }
-  //     } else {
-  //       setLastMessage(null);
-  //     }
-  //   }
+      translate();
+    }
+  }, [grp]);
 
-  //   if (allMessages?.length > 0) {
-  //     // console.log(allMessages);
-  //     const relatedMessages = allMessages.filter(
-  //       (msg) => msg.receiver === grp?._id
-  //     );
+  useEffect(() => {
+    if (lastMessage?.content?.length !== 0) {
+      const translate = async () => {
+        const savedLang = localStorage.getItem("lang");
+        if (savedLang != "en") {
+          const translated = await axios.post(`${backendPortURL}translate`, {
+            text: lastMessage?.content,
+            to: savedLang,
+          });
+          // console.log("translated", translated.data[0].translations[0].text);
+          setTranslatedLastMsg(translated?.data[0].translations[0].text);
+        } else {
+          setTranslatedLastMsg(lastMessage?.content);
+        }
+      };
 
-  //     if (relatedMessages?.length > 0) {
-  //       const latestMsg = relatedMessages[relatedMessages.length - 1];
-  //       // console.log(latestMsg);
-  //       setLastMessage(latestMsg);
+      translate();
+    }
+  }, [lastMessage]);
 
-  //       const newUnreadCount = relatedMessages.filter(
-  //         (msg) => msg.receiver === grp?._id && msg.sender?._id != currentUser.details?._id && !msg.unread
-  //       ).length;
-  //       setUnreadCount(newUnreadCount);
-  //     }
-  //   }
-  // }, [allMessages, currentUser, grp]);
 
+  
   const handleClick = () => {
     if (grp?._id) {
       dispatch(selectGroup(grp?._id));
@@ -105,14 +114,14 @@ const GroupCard = ({ grp, currentTab }) => {
           selectedGroup === grp?._id ? "bg-gray-100" : "bg-white"
         }`}
       >
-        <div className="text-4xl bg-gray-200 rounded-full p-2 2xl:text-6xl">
+        <div className="text-4xl bg-gray-200 rounded-full p-2 2xl:text-5xl">
           <MdGroups className="text-gray-400"/>
         </div>
 
         <div className="ml-4 flex flex-col w-full">
           <div className="flex justify-between items-center">
-            <h1 className="text-base sm:text-lg 2xl:text-3xl font-semibold text-[#334E83] font-poppins tracking-tighter">
-              {grp?.name}
+            <h1 className="text-base sm:text-lg 2xl:text-2xl font-semibold text-[#334E83] font-poppins tracking-tighter">
+              {groupName}
             </h1>
 
             <span className="text-xs 2xl:text-lg opacity-30 font-sans">
@@ -124,7 +133,7 @@ const GroupCard = ({ grp, currentTab }) => {
             </span>
           </div> 
 
-          <div className="flex justify-between items-center mt-1 2xl:mt-2">
+          <div className="flex justify-between items-center mt-1">
             {loading ? (
               <div className="w-40 h-4 bg-gray-200 rounded-md animate-pulse"></div>
             ) : (
@@ -141,9 +150,9 @@ const GroupCard = ({ grp, currentTab }) => {
                         <span>image</span>
                       </div>
                     ) : lastMessage.content?.length > 35 ? (
-                      `${lastMessage.content?.substring(0, 35)}...`
+                      `${translatedLastMsg?.substring(0, 35)}...`
                     ) : (
-                      lastMessage.content
+                      translatedLastMsg
                     )
                   ) : (
                     "No messages yet"
@@ -156,9 +165,9 @@ const GroupCard = ({ grp, currentTab }) => {
                       <span>image</span>
                     </div>
                   ) : lastMessage.content?.length > 35 ? (
-                    `${lastMessage.content?.substring(0, 30)}...`
+                    `${translatedLastMsg?.substring(0, 30)}...`
                   ) : (
-                    lastMessage.content
+                    translatedLastMsg
                   )
                 ) : (
                   "No messages yet"

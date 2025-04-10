@@ -10,6 +10,7 @@ import { getAllUsers } from "../../redux/slice/allUsersSlice";
 import axios from "axios";
 import { Spinner } from "flowbite-react";
 import { FaUser } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 const CreateGroup = () => {
   const [name, setName] = useState("");
@@ -22,6 +23,7 @@ const CreateGroup = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  const { t,  } = useTranslation();
 
   useEffect(() => {
     dispatch(getAllUsers());
@@ -111,21 +113,21 @@ const CreateGroup = () => {
           onClick={() => navigate("/textup?tab=groups")}
         />
         <h1 className=" text-xl font-semibold ml-4 2xl:text-4xl">
-          Create Group
+          {t("Create Group")}
         </h1>
       </div>
 
       {/* Group Description */}
       <div className="mb-8 ">
         <h2 className="mx-auto text-left sm:text-center text-5xl mb-4 2xl:mb-8 font-acme sm:text-[rgb(51,78,131)] sm:max-w-md md:max-w-xl 2xl:max-w-3xl sm:font-semibold sm:text-6xl md:text-7xl 2xl:text-8xl">
-          Make Group for <br className="hidden md:block" /> Team Work
+          {t("Make Group for")} <br className="hidden md:block" /> {t("Team Work")}
         </h2>
         <div className="flex gap-2 mb-2 font-roboto sm:max-w-md sm:mx-auto text-center sm:justify-center md:gap-5 md:pl-5">
           <span className="bg-gray-100 text-gray-600 rounded-full px-3 py-1 text-sm 2xl:text-base">
-            Group work
+            {t("Group work")}
           </span>
           <span className="bg-gray-100 text-gray-600 rounded-full px-3 py-1 text-sm md:ml-8 2xl:text-base 2xl:ml-12">
-            Team relationship
+            {t("Team relationship")}
           </span>
         </div>
 
@@ -144,7 +146,7 @@ const CreateGroup = () => {
               htmlFor="groupName"
               className="absolute text-gray-500 font-poppins text-sm left-3 top-0 transform -translate-y-1/2 scale-90 origin-left px-1 peer-placeholder-shown:top-1/2 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-focus:top-2.5 peer-focus:scale-90 peer-focus:-translate-y-1/2 transition-all"
             >
-              Group Name
+              {t("Group Name")}
             </label>
           </div>
 
@@ -161,7 +163,7 @@ const CreateGroup = () => {
               htmlFor="groupDescription"
               className="absolute text-gray-500 text-sm font-poppins left-3 top-0 transform -translate-y-1/2 scale-90 origin-left px-1 peer-placeholder-shown:top-1/2 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-focus:top-2.5 peer-focus:scale-90 peer-focus:-translate-y-1/2 transition-all"
             >
-              Group Description
+              {t("Group Description")}
             </label>
           </div>
         </div>
@@ -171,7 +173,7 @@ const CreateGroup = () => {
       <div className="md:flex md:gap-52 md:max-w-screen-sm  mx-auto">
         <div className="mb-6 w-fit text-nowrap">
           <h2 className="text-lg 2xl:text-xl font-semibold mb-2 text-[#334E83] font-poppins">
-            Group Admin
+            {t("Group Admin")}
           </h2>
           <div className="flex items-center md:mt-3">
             {admin?.profilePicture ? (
@@ -188,7 +190,7 @@ const CreateGroup = () => {
                 {admin?.firstname}
               </h3>
               <h5 className="text-sm 2xl:text-base text-gray-500 font-roboto">
-                Group Admin
+                {t("Group Admin")}
               </h5>
             </div>
           </div>
@@ -197,7 +199,7 @@ const CreateGroup = () => {
         {/* Invited Members Section */}
         <div className="mb-6 md:max-w-72 ">
           <h2 className="text-lg 2xl:text-xl font-semibold mb-2 text-[#334E83] font-poppins">
-            Invite Members
+            {t("Invite Members")}
           </h2>
           <div className="flex gap-3 flex-wrap md:mt-3">
             {members?.length > 0 ? (
@@ -244,7 +246,7 @@ const CreateGroup = () => {
           onClick={handleCreateGroup}
           className="w-full bg-[#334E83] font-poppins text-white py-3 hover:scale-105 rounded-full hover:bg-[#2A2760] transition-all ease-in-out duration-500"
         >
-          {loading ? <Spinner className="w-full mx-auto" /> : "Create"}
+          {loading ? <Spinner className="w-full mx-auto" /> : (t("Create"))}
         </button>
       </div>
 
