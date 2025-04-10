@@ -21,7 +21,7 @@ const GroupList = ({currentTab}) => {
   }, []);
 
   useEffect(() => {
-    // console.log(selector);
+    console.log(selector);
     if (selector) {
       setUser(selector);
       setLoading(false);
@@ -29,7 +29,7 @@ const GroupList = ({currentTab}) => {
         setGroups(selector.myGroups);
       }
     }
-  }, [selector]);
+  }, [selector?.myGroups?.length]);
 
   const handleNavigate = () => {
     if (window.innerWidth >= 786) {

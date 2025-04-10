@@ -199,7 +199,7 @@ const Home = () => {
           </div>
 
           {/* Main Content */}
-          <div className="flex-grow h-[calc(100%-185px)] sm:h-[calc(100%-80px)] 2xl:h-[calc(100%-109px)]  overflow-hidden">
+          <div className="flex-grow h-[calc(100%-175px)] sm:h-[calc(100%-80px)] 2xl:h-[calc(100%-109px)]  overflow-hidden">
             {currentTab === "messages" && (
               <MessageList currentTab={currentTab} />
             )}

@@ -46,6 +46,7 @@ const CreateGroup = () => {
   };
 
   const handleCreateGroup = async () => {
+    console.log(name,description)
     // fields validation logic
     const isFormValid = () => {
       if (!name || name.length <= 3) {
@@ -78,8 +79,8 @@ const CreateGroup = () => {
       setLoading(true);
       // Send API request
       const response = await axios.post(
-        `${backendPortURL}group/create`
-        // payload
+        `${backendPortURL}group/create`,
+        payload
       );
 
       if (response.status === 201 || response.status === 200) {
